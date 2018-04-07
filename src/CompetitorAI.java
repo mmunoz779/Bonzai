@@ -23,7 +23,6 @@ import org.bonzai.elements.api.tile.Grass;
 import org.bonzai.elements.api.tile.Lava;
 import org.bonzai.elements.api.tile.Mud;
 import org.bonzai.elements.api.tile.Water;
-import org.bonzai.game.Game;
 
 @TeamInfo(name="IllegalSkillsException")
 public class CompetitorAI implements ElementsAI {
@@ -42,6 +41,7 @@ public class CompetitorAI implements ElementsAI {
 
     @Override
     public void takeTurn(ElementsGameState localGameState) {
+    	
         gameState = localGameState;
         trees = gameState.world().get(Elements.TREE);
         waters = gameState.world().get(Elements.WATER);
@@ -51,6 +51,7 @@ public class CompetitorAI implements ElementsAI {
         muds = gameState.world().get(Elements.MUD);
         crystals = gameState.world().get(Elements.CRYSTAL);
 
+<<<<<<< HEAD
 //        if (setup) {
 //            setup = setUpBase();
 //        }
@@ -66,6 +67,9 @@ public class CompetitorAI implements ElementsAI {
 
             gameState.my().base().shout(crystals.size() + " crystals left!");
 
+=======
+        if (!gameState.spawnEarth()) {
+>>>>>>> 14e889f92ba11f35b6da1bf2f7209ce549ad4c00
             /*
              * The Game API organizes different sets of data by teams.  To easily access your
              * own teams data, try gameState.my().
@@ -107,15 +111,32 @@ public class CompetitorAI implements ElementsAI {
      * @param air elemental
      * @param gameState
      */
-    public void attack(Elemental element, ElementsGameState gameState ) {
+    public void blazeAttack(Elemental element, ElementsGameState gameState) {
     	
+    	element.shout("Blaze attack !!");
     	if (!element.hasFire()) {
     		element.pickUpFire();
     	}
     	
-    	element.move(element.pathfinding().findNearest(gameState.leadingRival().earths()));
+    	Position enemyPosition = element.pathfinding().findNearest(gameState.leadingRival().earths()).getPosition();
+    	
+    	while ( element.getPosition() != enemyPosition ) {
+    		element.move(element.pathfinding().findNearest(gameState.leadingRival().earths()));
+    	}
+    	
+    	element.activate(gameState.rivals().get(Elements.BASE).get(0).getPosition());
+    }
+    
+    /** Changes air elementals into typhoons, then attacks enemies
+    * @param air elemental
+    * @param gameState
+    */
+    public void typhoonAttack(Elemental element, ElementsGameState gameState) {
+	
+    	element.shout("water attack !!");
     	
     }
+<<<<<<< HEAD
 
     public void collect(Collection<Crystal> crystals) {
         gameState.my().earths().stream().filter(Elemental::hasWater).forEach(Earth::pickUpWater);
@@ -138,4 +159,7 @@ public class CompetitorAI implements ElementsAI {
     }
     */
 
+=======
+    
+>>>>>>> 14e889f92ba11f35b6da1bf2f7209ce549ad4c00
 }
