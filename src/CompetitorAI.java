@@ -1,6 +1,7 @@
 import java.util.Collection;
 import java.util.List;
 
+import org.bonzai.api.gamestate.GameState;
 import org.bonzai.api.position.Position;
 import org.bonzai.cli.BonzaiTeamsCommand;
 import org.bonzai.elements.api.ElementsFilters;
@@ -30,12 +31,11 @@ public class CompetitorAI implements ElementsAI {
     private Collection<Grass> grasses;
     private Collection<Mud> muds;
     private Collection<Tree> trees;
+    private ElementsGameState gameState;
 
     @Override
-    public void takeTurn(ElementsGameState gameState) {
-        /*
-         * The first step is to spawn.  Either Elements.EARTH or Elements.AIR
-         */
+    public void takeTurn(ElementsGameState localGameState) {
+        gameState = localGameState;
         trees = gameState.world().get(Elements.TREE);
         waters = gameState.world().get(Elements.WATER);
         mountains = gameState.world().get(Elements.MOUNTAIN);
@@ -43,6 +43,9 @@ public class CompetitorAI implements ElementsAI {
         grasses = gameState.world().get(Elements.GRASS);
         muds = gameState.world().get(Elements.MUD);
         crystals = gameState.world().get(Elements.CRYSTAL);
+
+
+
         if (!gameState.spawnEarth()) {
             /*
              * If you cannot spawn an Earth try to spawn an Air.
