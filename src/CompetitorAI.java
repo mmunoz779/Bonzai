@@ -97,17 +97,18 @@ public class CompetitorAI implements ElementsAI {
         gameState.my().airs().forEach(Air::explore);
     }
     
-    public void attack(Elemental element ) {
+    /**
+     * Changes air elementals into blazes, then attacks enemies
+     * @param air elemental
+     * @param gameState
+     */
+    public void attack(Elemental element, ElementsGameState gameState ) {
     	
     	if (!element.hasFire()) {
-    		
-    		Tile closestLava = element.pathfinding().findNearest(lavas);
-    		
-    		if ( closestLava != null ) {
-    			
-    		}
-    		
+    		element.pickUpFire();
     	}
+    	
+    	element.move(element.pathfinding().findNearest(gameState.leadingRival().earths()));
     	
     }
 
