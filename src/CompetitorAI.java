@@ -1,9 +1,10 @@
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.bonzai.api.gamestate.GameState;
+import org.bonzai.api.position.Path;
 import org.bonzai.api.position.Position;
-import org.bonzai.cli.BonzaiTeamsCommand;
 import org.bonzai.elements.api.ElementsFilters;
 import org.bonzai.elements.api.Elements;
 import org.bonzai.elements.api.ai.ElementsAI;
@@ -65,7 +66,7 @@ public class CompetitorAI implements ElementsAI {
                     // Looks like we can't spawn an Air or an Earth this turn.
                 }
             }
-
+            
             gameState.my().base().shout(crystals.size() + " crystals left!");
 
             if (!gameState.spawnEarth()) {
@@ -82,11 +83,29 @@ public class CompetitorAI implements ElementsAI {
         turnCounter++;
     }
     /**
-     * Changes air elementals into blazes, then attacks enemies
-     * @param air elemental
-     * @param gameState
+     * Converts air elementals into blazes, then clears most expensive paths to crystals during setup stage
+     * @param air elementals
+     * @param collection of crystals
      */
-    public void blazeAttack(Collection<Air> airs, ElementsGameState gameState) {
+    public void blazeClear(Collection<Air> airs, Collection<Crystal> crystals) {
+    	
+    	Path nearestCrystal = gameState.my().base().pathfinding().getPathTo(gameState.my().base().pathfinding().findNearest(crystals));
+    	
+    	airs.forEach(air -> {
+    		if (!air.hasFire()) {
+    			air.pickUpFire();
+    		} else {
+    			air.shout("blazin the forest");
+    			
+    		}
+    	});
+    }
+    
+    /**
+     * Changes air elementals into blazes, then attacks enemies
+     * @param air elementals
+     */
+    public void blazeAttack(Collection<Air> airs) {
     	
         airs.forEach(air -> {
             if (!air.hasFire()) {
@@ -105,10 +124,9 @@ public class CompetitorAI implements ElementsAI {
     }
     
     /** Changes air elementals into typhoons, then attacks enemies
-    * @param air elemental
-    * @param gameState
+    * @param air elementals
     */
-    public void typhoonAttack(Collection<Air> airs, ElementsGameState gameState) {
+    public void typhoonAttack(Collection<Air> airs) {
 	
     	airs.forEach(air -> {
             if (!air.hasWater()) {
