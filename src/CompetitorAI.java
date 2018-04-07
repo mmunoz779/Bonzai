@@ -22,7 +22,6 @@ import org.bonzai.elements.api.tile.Grass;
 import org.bonzai.elements.api.tile.Lava;
 import org.bonzai.elements.api.tile.Mud;
 import org.bonzai.elements.api.tile.Water;
-import org.bonzai.game.Game;
 
 @TeamInfo(name="IllegalSkillsException")
 public class CompetitorAI implements ElementsAI {
@@ -39,6 +38,7 @@ public class CompetitorAI implements ElementsAI {
 
     @Override
     public void takeTurn(ElementsGameState localGameState) {
+    	
         gameState = localGameState;
         trees = gameState.world().get(Elements.TREE);
         waters = gameState.world().get(Elements.WATER);
@@ -47,8 +47,6 @@ public class CompetitorAI implements ElementsAI {
         grasses = gameState.world().get(Elements.GRASS);
         muds = gameState.world().get(Elements.MUD);
         crystals = gameState.world().get(Elements.CRYSTAL);
-
-
 
         if (!gameState.spawnEarth()) {
             /*
@@ -105,14 +103,30 @@ public class CompetitorAI implements ElementsAI {
      * @param air elemental
      * @param gameState
      */
-    public void attack(Elemental element, ElementsGameState gameState ) {
+    public void blazeAttack(Elemental element, ElementsGameState gameState) {
     	
+    	element.shout("Blaze attack !!");
     	if (!element.hasFire()) {
     		element.pickUpFire();
     	}
     	
-    	element.move(element.pathfinding().findNearest(gameState.leadingRival().earths()));
+    	Position enemyPosition = element.pathfinding().findNearest(gameState.leadingRival().earths()).getPosition();
+    	
+    	while ( element.getPosition() != enemyPosition ) {
+    		element.move(element.pathfinding().findNearest(gameState.leadingRival().earths()));
+    	}
+    	
+    	element.activate(gameState.rivals().get(Elements.BASE).get(0).getPosition());
+    }
+    
+    /** Changes air elementals into typhoons, then attacks enemies
+    * @param air elemental
+    * @param gameState
+    */
+    public void typhoonAttack(Elemental element, ElementsGameState gameState) {
+	
+    	element.shout("water attack !!");
     	
     }
-
+    
 }
