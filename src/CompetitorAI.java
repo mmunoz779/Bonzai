@@ -1,6 +1,7 @@
 import java.util.Collection;
 import java.util.List;
 
+import org.bonzai.api.position.Position;
 import org.bonzai.cli.BonzaiTeamsCommand;
 import org.bonzai.elements.api.ElementsFilters;
 import org.bonzai.elements.api.Elements;
@@ -9,23 +10,48 @@ import org.bonzai.elements.api.gameobject.element.Earth;
 import org.bonzai.elements.api.gameobject.Elemental;
 import org.bonzai.elements.api.gameobject.element.Air;
 import org.bonzai.elements.api.gameobject.structure.Crystal;
+import org.bonzai.elements.api.gameobject.structure.Mountain;
+import org.bonzai.elements.api.gameobject.structure.Tree;
 import org.bonzai.elements.api.gamestate.ElementsGameState;
 import org.bonzai.api.attribute.GameObject;
 import org.bonzai.api.attribute.Tile;
 import org.bonzai.api.team.TeamInfo;
+import org.bonzai.elements.api.tile.Grass;
+import org.bonzai.elements.api.tile.Lava;
+import org.bonzai.elements.api.tile.Mud;
+import org.bonzai.elements.api.tile.Water;
+import org.bonzai.game.Game;
 
-@TeamInfo(name="My Team Name")
+@TeamInfo(name="IllegalSkillsException")
 public class CompetitorAI implements ElementsAI {
+
+    //initialize collections
+    private Collection<Crystal> crystals;
+    private Collection<Water> waters;
+    private Collection<Mountain> mountains;
+    private Collection<Lava> lavas;
+    private Collection<Grass> grasses;
+    private Collection<Mud> muds;
+    private Collection<Tree> trees;
 
     @Override
     public void takeTurn(ElementsGameState gameState) {
-        /* 
+        /*
          * The first step is to spawn.  Either Elements.EARTH or Elements.AIR
          */
+        trees = gameState.world().get(Elements.TREE);
+        waters = gameState.world().get(Elements.WATER);
+        mountains = gameState.world().get(Elements.MOUNTAIN);
+        lavas = gameState.world().get(Elements.LAVA);
+        grasses = gameState.world().get(Elements.GRASS);
+        muds = gameState.world().get(Elements.MUD);
+        crystals = gameState.world().get(Elements.CRYSTAL);
         if (!gameState.spawnEarth()) {
             /*
              * If you cannot spawn an Earth try to spawn an Air.
              */
+            Earth earth = new Earth();
+
             if(!gameState.spawnAir()) {
                 // Looks like we can't spawn an Air or an Earth this turn.
             }
