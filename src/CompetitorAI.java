@@ -42,6 +42,7 @@ public class CompetitorAI implements ElementsAI {
     private boolean setup = true;//false;
 
     private int turnCounter = 0;
+    private int pathsCleared = 0;
     
     @Override
     public void takeTurn(ElementsGameState localGameState) {
@@ -82,23 +83,50 @@ public class CompetitorAI implements ElementsAI {
         
         turnCounter++;
     }
+    
+    /**
+     * Finds first clearable obstacle in path to crystal
+     * @param path to be checked
+     * @return Position of first tree
+     * @return null if no obstacles in path exist
+     */
+    @SuppressWarnings("unlikely-arg-type")
+	public Position inaccessibleType(Path path) {
+    	for ( int i = 0; i < path.size(); i++ ) {
+    		if ( path.get(i).equals(gameState.world().get(Elements.TREE))) {
+    			return path.get(i);
+    		}
+    	}
+    	
+    	return null;
+    }
+    
     /**
      * Converts air elementals into blazes, then clears most expensive paths to crystals during setup stage
      * @param air elementals
      * @param collection of crystals
      */
-    public void blazeClear(Collection<Air> airs, Collection<Crystal> crystals) {
+    public boolean blazeClear(Collection<Air> airs, Collection<Crystal> crystals) {
     	
     	Path nearestCrystal = gameState.my().base().pathfinding().getPathTo(gameState.my().base().pathfinding().findNearest(crystals));
+    	Position beginningOfPath = inaccessibleType(nearestCrystal);
     	
     	airs.forEach(air -> {
     		if (!air.hasFire()) {
     			air.pickUpFire();
     		} else {
     			air.shout("blazin the forest");
-    			
+    			if ( beginningOfPath != null ) {
+    				air.move(beginningOfPath);
+    				if ( air.getPosition() == beginningOfPath ) {
+    					air.activate(nearestCrystal);
+    				}
+    			}
     		}
     	});
+    	
+    	pathsCleared++;
+    	return (pathsCleared >= 3);
     }
     
     /**
