@@ -10,6 +10,7 @@ import org.bonzai.elements.api.ai.ElementsAI;
 import org.bonzai.elements.api.gameobject.element.Earth;
 import org.bonzai.elements.api.gameobject.Elemental;
 import org.bonzai.elements.api.gameobject.element.Air;
+import org.bonzai.elements.api.gameobject.structure.Base;
 import org.bonzai.elements.api.gameobject.structure.Crystal;
 import org.bonzai.elements.api.gameobject.structure.Mountain;
 import org.bonzai.elements.api.gameobject.structure.Tree;
@@ -36,6 +37,8 @@ public class CompetitorAI implements ElementsAI {
     private Collection<Mud> muds;
     private Collection<Tree> trees;
     private ElementsGameState gameState;
+    //TODO uncomment false
+    private boolean setup = true;//false;
 
     @Override
     public void takeTurn(ElementsGameState localGameState) {
@@ -48,56 +51,55 @@ public class CompetitorAI implements ElementsAI {
         muds = gameState.world().get(Elements.MUD);
         crystals = gameState.world().get(Elements.CRYSTAL);
 
-
-
-        if (!gameState.spawnEarth()) {
-            /*
-             * If you cannot spawn an Earth try to spawn an Air.
-             */
-            Earth earth = new Earth();
-
-            if(!gameState.spawnAir()) {
-                // Looks like we can't spawn an Air or an Earth this turn.
+//        if (setup) {
+//            setup = setUpBase();
+//        }
+        if (setup) {
+            if (!gameState.spawnEarth()) {
+                /*
+                 * If you cannot spawn an Earth try to spawn an Air.
+                 */
+                if(!gameState.spawnAir()) {
+                    // Looks like we can't spawn an Air or an Earth this turn.
+                }
             }
+
+            gameState.my().base().shout(crystals.size() + " crystals left!");
+
+            /*
+             * The Game API organizes different sets of data by teams.  To easily access your
+             * own teams data, try gameState.my().
+             *
+             * To access data of rival teams, try gameState.rivals() or gameState.leadingRival().
+             */
+            Collection<Earth> earthsWithCrystals = gameState.my().get(Elements.EARTH, ElementsFilters.HAS_CRYSTAL);
+            earthsWithCrystals.forEach(earth -> {
+                /*
+                 * Some commands have default behaviors if they cannot be carried out immediately.
+                 * For instance, deposit crystal will move the earth closer to the crystal if it can't
+                 * pick it up this turn.
+                 */
+                earth.depositCrystal();
+            });
+
+            Collection<Earth> earthsWithoutCrystals = gameState.my().get(Elements.EARTH, ElementsFilters.HAS_CRYSTAL.negate());
+            earthsWithoutCrystals.forEach(earth -> {
+                /*
+                 * There are several different path finding methods that will come in handy as
+                 * you navigate the elementals through the world.
+                 */
+                Crystal closestCrystal = earth.pathfinding().findNearest(Crystal.class);
+                if (closestCrystal != null) {
+                    earth.pickUpCrystal(closestCrystal);
+                }
+            });
+
+            /*
+             * You don't need to know functional programming to compete in BonzAI, but we highly
+             * recommend learning it if you get a chance.
+             */
+            gameState.my().airs().forEach(Air::disperse);
         }
-        
-
-        Collection<Crystal> allCrystals = gameState.world().get(Elements.CRYSTAL);
-        gameState.my().base().shout(allCrystals.size() + " crystals left!");
-
-        /*
-         * The Game API organizes different sets of data by teams.  To easily access your
-         * own teams data, try gameState.my().
-         * 
-         * To access data of rival teams, try gameState.rivals() or gameState.leadingRival().
-         */
-        Collection<Earth> earthsWithCrystals = gameState.my().get(Elements.EARTH, ElementsFilters.HAS_CRYSTAL);
-        earthsWithCrystals.forEach(earth -> {
-            /* 
-             * Some commands have default behaviors if they cannot be carried out immediately.
-             * For instance, deposit crystal will move the earth closer to the crystal if it can't
-             * pick it up this turn.
-             */
-            earth.depositCrystal();
-        });
-        
-        Collection<Earth> earthsWithoutCrystals = gameState.my().get(Elements.EARTH, ElementsFilters.HAS_CRYSTAL.negate());
-        earthsWithoutCrystals.forEach(earth -> {
-            /*
-             * There are several different path finding methods that will come in handy as
-             * you navigate the elementals through the world.
-             */
-            Crystal closestCrystal = earth.pathfinding().findNearest(Crystal.class);
-            if (closestCrystal != null) {
-                earth.pickUpCrystal(closestCrystal);
-            }
-        });
-        
-        /* 
-         * You don't need to know functional programming to compete in BonzAI, but we highly
-         * recommend learning it if you get a chance.
-         */
-        gameState.my().airs().forEach(Air::explore);
     }
     
     /**
@@ -114,5 +116,26 @@ public class CompetitorAI implements ElementsAI {
     	element.move(element.pathfinding().findNearest(gameState.leadingRival().earths()));
     	
     }
+
+    public void collect(Collection<Crystal> crystals) {
+        gameState.my().earths().stream().filter(Elemental::hasWater).forEach(Earth::pickUpWater);
+        gameState.my().earths().stream().filter(earth -> earth.hasCrystal()).forEach(Earth::depositCrystal);
+        gameState.my().earths().stream().filter(earth -> !earth.hasCrystal()).forEach(Earth::pickUpCrystal);
+    }
+
+    /*
+    public boolean setUpBase() {
+        if (lavas.isEmpty() && waters.isEmpty()) {
+            return true;
+        } else if (lavas.isEmpty()) {
+            Base base = gameState.my().base();
+            if (base.pathfinding().findNearest(waters).getPosition().getMinimumDistance(base.getPosition()) > base.pathfinding().findNearest().getPosition().getMinimumDistance(base.getPosition()));
+
+            return true;
+        } else if (waters.isEmpty()) {
+
+        }
+    }
+    */
 
 }
