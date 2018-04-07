@@ -7,6 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="bonzai-api-javadoc" level="project" />
+    <orderEntry type="library" name="elements-api-javadoc" level="project" />
   </component>
 </module>
-

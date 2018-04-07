@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="bonzai-api-javadoc">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/bonzai-api.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/bonzai-core.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/bonzai-launcher.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/docs/bonzai-api-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>

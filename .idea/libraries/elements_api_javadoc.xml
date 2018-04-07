@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="elements-api-javadoc">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/elements-api.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/elements-game-11.2.0.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/docs/elements-api-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>
