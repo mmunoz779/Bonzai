@@ -15,6 +15,7 @@ import org.bonzai.elements.api.gameobject.structure.Tree;
 import org.bonzai.elements.api.gamestate.ElementsGameState;
 import org.bonzai.api.attribute.GameObject;
 import org.bonzai.api.attribute.Tile;
+import org.bonzai.api.gamestate.GameState;
 import org.bonzai.api.team.TeamInfo;
 import org.bonzai.elements.api.tile.Grass;
 import org.bonzai.elements.api.tile.Lava;
@@ -96,10 +97,16 @@ public class CompetitorAI implements ElementsAI {
         gameState.my().airs().forEach(Air::explore);
     }
     
-    public void attack(Elemental element) {
+    public void attack(Elemental element ) {
     	
     	if (!element.hasFire()) {
-    		Tile closestFire = element.pathfinding().findNearest()
+    		
+    		Tile closestLava = element.pathfinding().findNearest(lavas);
+    		
+    		if ( closestLava != null ) {
+    			
+    		}
+    		
     	}
     	
     }
