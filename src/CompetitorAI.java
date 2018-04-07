@@ -36,9 +36,12 @@ public class CompetitorAI implements ElementsAI {
     private Collection<Mud> muds;
     private Collection<Tree> trees;
     private ElementsGameState gameState;
+ 
     //TODO uncomment false
     private boolean setup = true;//false;
 
+    private int turnCounter = 0;
+    
     @Override
     public void takeTurn(ElementsGameState localGameState) {
 
@@ -75,36 +78,52 @@ public class CompetitorAI implements ElementsAI {
                 collect(crystals);
             }
         }
+        
+        turnCounter++;
     }
     /**
      * Changes air elementals into blazes, then attacks enemies
      * @param air elemental
      * @param gameState
      */
-    public void blazeAttack(Elemental element, ElementsGameState gameState) {
+    public void blazeAttack(Collection<Air> airs, ElementsGameState gameState) {
     	
-    	element.shout("Blaze attack !!");
-    	if (!element.hasFire()) {
-    		element.pickUpFire();
-    	}
-    	
-    	Position enemyPosition = element.pathfinding().findNearest(gameState.leadingRival().earths()).getPosition();
-    	
-    	while ( element.getPosition() != enemyPosition ) {
-    		element.move(element.pathfinding().findNearest(gameState.leadingRival().earths()));
-    	}
-    	
-    	element.activate(gameState.rivals().get(Elements.BASE).get(0).getPosition());
+        airs.forEach(air -> {
+            if (!air.hasFire()) {
+                air.pickUpFire();
+            } else {
+                air.shout("4 the fire nation !!");
+                Base enemyBase = gameState.rivals().get(Elements.BASE).get(0);
+                gameState.leadingRival().earths();
+                Position enemyPosition = air.pathfinding().findNearest(gameState.leadingRival().earths()).getPosition();
+                air.move(enemyPosition);
+                if (air.getPosition().equals(enemyPosition)) {
+                    air.activate(enemyBase.getPosition());
+                }
+            }
+        });
     }
     
     /** Changes air elementals into typhoons, then attacks enemies
     * @param air elemental
     * @param gameState
     */
-    public void typhoonAttack(Elemental element, ElementsGameState gameState) {
+    public void typhoonAttack(Collection<Air> airs, ElementsGameState gameState) {
 	
-    	element.shout("water attack !!");
-    	
+    	airs.forEach(air -> {
+            if (!air.hasWater()) {
+                air.pickUpWater();
+            } else {
+                air.shout("squirt squirt");
+                Base enemyBase = gameState.rivals().get(Elements.BASE).get(0);
+                gameState.leadingRival().earths();
+                Position enemyPosition = air.pathfinding().findNearest(gameState.leadingRival().earths()).getPosition();
+                air.move(enemyPosition);
+                if (air.getPosition().equals(enemyPosition)) {
+                    air.activate(enemyBase.getPosition());
+                }
+            }
+        });
     }
 
     public void collect(Collection<Crystal> crystals) {
