@@ -6,9 +6,12 @@ import org.bonzai.elements.api.ElementsFilters;
 import org.bonzai.elements.api.Elements;
 import org.bonzai.elements.api.ai.ElementsAI;
 import org.bonzai.elements.api.gameobject.element.Earth;
+import org.bonzai.elements.api.gameobject.Elemental;
 import org.bonzai.elements.api.gameobject.element.Air;
 import org.bonzai.elements.api.gameobject.structure.Crystal;
 import org.bonzai.elements.api.gamestate.ElementsGameState;
+import org.bonzai.api.attribute.GameObject;
+import org.bonzai.api.attribute.Tile;
 import org.bonzai.api.team.TeamInfo;
 
 @TeamInfo(name="My Team Name")
@@ -65,6 +68,14 @@ public class CompetitorAI implements ElementsAI {
          * recommend learning it if you get a chance.
          */
         gameState.my().airs().forEach(Air::explore);
+    }
+    
+    public void attack(Elemental element) {
+    	
+    	if (!element.hasFire()) {
+    		Tile closestFire = element.pathfinding().findNearest()
+    	}
+    	
     }
 
 }
